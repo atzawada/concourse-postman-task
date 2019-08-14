@@ -1,0 +1,41 @@
+resource_types:
+
+  - name: email
+    type: docker-image
+    source:
+      repository: pcfseceng/email-resource
+
+resources:
+  - name: git-repo
+    type: git
+    webhook_token: token
+    source:
+      uri: ((postman-resource-git-uri))
+      branch: master
+      username: ((git-username))
+      password: ((git-password))
+
+  - name: email
+    type: email
+    source:
+      smtp:
+        host: ((email-host))
+        port: ((email-port))
+        username: ((email-username))
+        password: ((email-password))
+      from: ((email-address))
+      to: ((email-recipient))
+
+jobs:
+  - name: test-postman
+    plan:
+      - get: git-repo
+      
+      - task: run-postman
+        file: task.yml
+  
+      - put: email
+        params:
+          subject_text: "Testing finished"
+          body_text: "See attached file."
+          attachment_globs: [ "postman/results.json" ]
