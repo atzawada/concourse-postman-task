@@ -33,9 +33,11 @@ jobs:
       
       - task: run-postman
         file: git-repo/task.yml
+        params:
+          script: git-repo/test/postman_collection.json
   
       - put: email
         params:
           subject_text: "Testing finished"
           body_text: "See attached file."
-          attachment_globs: [ "postman/results.json" ]
+          attachment_globs: [ "results/*" ]

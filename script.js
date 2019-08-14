@@ -3,16 +3,14 @@
 const { spawnSync } = require("child_process");
 const fs = require('fs');
 var request;
-const valid_params = [ "script", "folder", "env", "data", "globals", "iterations",
+const valid_params = [ "PATH", "NODE_VERSION", "YARN_VERSION", "HOME", "USER", "script", "folder", "env", "data", "globals", "iterations",
                        "bail", "silent", "insecure", "suppress_exit_code", "ignore_redirects",
-                       "fail_job_on_test_failure"];
-const tmp_location = "/tmp/build/put/";
+                       "fail_job_on_test_failure", "html_report_template"];
 
-var params = [];
+var params = process.env;
 var newman_params = [];
 
-// Check and parse params
-params = request["params"];
+console.error(process.env);
 
 for (param in params) {
   if (!valid_params.includes(param)) {
@@ -83,10 +81,15 @@ if (params.hasOwnProperty(valid_params[10]) && params[valid_params[10]]) {
 }
 
 console.error(newman_params);
-var run_params = ["run", "--reporters", "cli,json", "--reporter-json-export", "/opt/resource/results.json"];
+var run_params = ["run", "--reporters", "cli,json,html", "--reporter-json-export", "results/results.json", "--reporter-html-export", "results/results.html"];
+
+if (params["html_report_template"]) {
+  rum_params.push("--reporter-html-template");
+  run_params.push(params["html_report_template"]);
+}
 
 if (params["script"]) {
-  var script_location = tmp_location + params["script"];
+  var script_location = params["script"];
 
   run_params.push(script_location);
   run_params.concat(newman_params);
@@ -96,7 +99,7 @@ if (params["script"]) {
 }
 
 // Get results
-var results = fs.readFileSync("/opt/resource/results.json");
+var results = fs.readFileSync("results/results.json");
 
 results = JSON.parse(results);
 
