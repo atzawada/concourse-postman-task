@@ -19,12 +19,12 @@ resources:
     type: email
     source:
       smtp:
-        host: ((email-host))
-        port: ((email-port))
+        host: ((smtp-address))
+        port: ((smtp-port))
         username: ((email-username))
         password: ((email-password))
       from: ((email-address))
-      to: ((email-recipient))
+      to: ((email-destination))
 
 jobs:
   - name: test-postman
