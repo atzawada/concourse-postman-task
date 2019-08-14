@@ -10,8 +10,6 @@ const valid_params = [ "PATH", "NODE_VERSION", "YARN_VERSION", "HOME", "USER", "
 var params = process.env;
 var newman_params = [];
 
-console.error(process.env);
-
 for (param in params) {
   if (!valid_params.includes(param)) {
     console.error("Invalid parameter " + param + ", bailing out.");
@@ -93,7 +91,6 @@ if (params["script"]) {
   run_params.push(script_location);
   run_params.concat(newman_params);
 
-  console.error(run_params);
   const newman = spawnSync("newman", run_params, {stdio: ["ignore", process.stderr, process.stderr ] });
 }
 
