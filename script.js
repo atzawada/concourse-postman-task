@@ -81,7 +81,7 @@ if (params.hasOwnProperty(valid_params[10]) && params[valid_params[10]]) {
 var run_params = ["run", "--reporters", "cli,json,html", "--reporter-json-export", "results/results.json", "--reporter-html-export", "results/results.html"];
 
 if (params["html_report_template"]) {
-  rum_params.push("--reporter-html-template");
+  run_params.push("--reporter-html-template");
   run_params.push(params["html_report_template"]);
 }
 

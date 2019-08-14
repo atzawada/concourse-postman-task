@@ -34,10 +34,11 @@ jobs:
       - task: run-postman
         file: git-repo/task.yml
         params:
-          script: git-repo/test/postman_collection.json
+          script: git-repo/test/postman_collection_fails.json
+          html_report_template: git-repo/test/template/awesome-template.hbs
   
       - put: email
         params:
           subject_text: "Testing finished"
-          body_text: "See attached file."
-          attachment_globs: [ "results/*" ]
+          body_text: "Testing is finished"
+          attachment_globs: [ "results/*.html" ]
