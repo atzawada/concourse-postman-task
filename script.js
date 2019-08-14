@@ -80,7 +80,6 @@ if (params.hasOwnProperty(valid_params[10]) && params[valid_params[10]]) {
   newman_params.push("--ignore-redirects");
 }
 
-console.error(newman_params);
 var run_params = ["run", "--reporters", "cli,json,html", "--reporter-json-export", "results/results.json", "--reporter-html-export", "results/results.html"];
 
 if (params["html_report_template"]) {
