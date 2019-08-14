@@ -7,10 +7,10 @@ image_resource:
     repository: atzawada/concourse-postman-task
 
 imputs:
-  - git-repo
+  - name: git-repo
 
 outputs:
-  - results
+  - name: results
 
 run:
   path: /bin/script
