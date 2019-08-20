@@ -3,9 +3,9 @@
 const { spawnSync } = require("child_process");
 const fs = require('fs');
 var request;
-const valid_params = [ "PATH", "NODE_VERSION", "YARN_VERSION", "HOME", "USER", "script", "folder", "env", "data", "globals", "iterations",
+const valid_params = [ "script", "scripts", "folder", "env", "data", "globals", "iterations",
                        "bail", "silent", "insecure", "suppress_exit_code", "ignore_redirects",
-                       "fail_job_on_test_failure", "html_report_template"];
+                       "fail_job_on_test_failure", "html_report_template", "PATH", "NODE_VERSION", "YARN_VERSION", "HOME", "USER" ];
 
 var params = process.env;
 var newman_params = [];
@@ -18,9 +18,14 @@ for (param in params) {
 }
 
 // script
-if (!params.hasOwnProperty(valid_params[0])) {
+if (!params.hasOwnProperty(valid_params[0]) || !params.hasOwnProperty(valid_params[1])) {
   console.error("Missing required parameter, bailing out.");
   process.exit(-2);
+}
+
+if (params.hasOwnProperty(valid_params[0]) && params.hasOwnProperty(valid_params[1])) {
+  console.error("Cannot use both script and scripts parameters, bailing out.");
+  process.exit(-3);
 }
 
 // folder
@@ -91,7 +96,30 @@ if (params["script"]) {
   run_params.push(script_location);
   run_params.concat(newman_params);
 
+  var run_time = new Date();
+  run_time = run_time.getTime();
+
+  run_params[4] = "results/results_" + run_time + ".json";
+  run_params[6] = "results/results_" + run_time + ".html";
+
   const newman = spawnSync("newman", run_params, {stdio: ["ignore", process.stderr, process.stderr ] });
+}
+
+if (params["scripts"]) {
+  var scripts = params["scripts"];
+  run_params.push(null);
+  run_params.concat(newman_params);
+  
+  for (script in scripts) {
+    var run_time = new Date();
+    run_time = run_time.getTime();
+
+    run_params[4] = "results/results_" + run_time + ".json";
+    run_params[6] = "results/results_" + run_time + ".html";
+    run_params[7] = script;
+    
+    const newman = spawnSync("newman", run_params, {stdio: ["ignore", process.stderr, process.stderr ] });
+  }
 }
 
 // Get results
@@ -104,5 +132,5 @@ var failures = run["failures"];
 
 if (params["fail_job_on_test_failure"] && failures.length > 0) {
   console.error("Run finished with errors");
-  process.exit(-3);
+  process.exit(-4);
 }
